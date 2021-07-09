@@ -12,13 +12,17 @@ export class UsersService {
         });
     }
 
-    async findUser(userWhereUniqueInput: Prisma.UserWhereUniqueInput): Promise<User | null> {
+    async findUserByEamil(userWhereUniqueInput: Prisma.UserWhereUniqueInput): Promise<User | null> {
         return this.prismaService.user.findUnique({
-            where: userWhereUniqueInput
+            where: userWhereUniqueInput,
+            include: {
+                team: true
+            }
         });
     }
 
     async truncate() {
-        await this.prismaService.user.deleteMany({where: {}})
+        await this.prismaService.user.deleteMany({where: {}});
     }
+    
 }

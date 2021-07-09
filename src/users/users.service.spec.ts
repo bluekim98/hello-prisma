@@ -2,47 +2,68 @@ import { Prisma, User } from '.prisma/client';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '../app.module';
 import { UsersService } from './users.service';
+const data = require('../db/test-data/data');
+
 
 describe('UsersService', () => {
   let service: UsersService;
-  let userCreateInput: Prisma.UserCreateInput;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [UsersService],
       imports: [AppModule]
     }).compile();
+    jest.setTimeout(10000000);
 
     service = module.get<UsersService>(UsersService);
   });
 
-  beforeEach(() => {
-    userCreateInput = {
-      email: 'blue@email.com',
-      name: '아이유',
-      nickname: 'blue',
+  /*
+  beforeEach(async () => {
+    await service.truncate();
+
+    const users: Prisma.UserCreateInput[] = data.users;
+    let user: Prisma.UserCreateInput;
+    for(user of users) {
+      await service.createUser(user);
     }
   });
+  */
 
-  afterAll(() => {
-    service.truncate();
-  });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
 
-  it('should be created user', async () => {
-    const createdUser: User = await service.createUser(userCreateInput);
-    expect(createdUser.name).toBe(userCreateInput.name);
-  });
-  
-  it('should be matched', async () => {
-    const userWhereUniqueInput: Prisma.UserWhereUniqueInput = {
-      email: userCreateInput.email
+  /*
+  it('test data !',async () => {
+    await service.truncate();
+    const test = 'Prisma CRUD Test';
+    console.time(test);
+    for(let i = 0; i < 30; i++) {
+      await service.createUser({
+        email: `test_${i}@email.com`,
+        name: `test${i}`,
+        nickname: `test${i}_test${i}`,
+        team: {
+          connect: {id: 1}
+        }
+      });
     }
-    const findedUser: User = await service.findUser(userWhereUniqueInput);
-    console.log(findedUser);
+    console.timeEnd(test);
+
+    expect(1).toBe(1);
+  });
+*/
+  
+  /*
+  it('should be matched', async () => {
+    const email: string = 'blue@email.com';
+    const userWhereUniqueInput: Prisma.UserWhereUniqueInput = {
+      email
+    }
+    const findedUser: User = await service.findUserByEamil(userWhereUniqueInput);
     expect(userWhereUniqueInput.email).toBe(findedUser.email);
   });
+  */
 });
